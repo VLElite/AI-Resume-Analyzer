@@ -1,0 +1,80 @@
+.stApp{
+    background:#0F172A;
+}
+
+/* Hero Section */
+
+.hero{
+
+    text-align:center;
+
+    padding:30px;
+
+    color:white;
+}
+
+.hero h1{
+
+    font-size:55px;
+
+    font-weight:bold;
+}
+
+.hero p{
+
+    color:#94A3B8;
+
+    font-size:20px;
+}
+
+/* Score Cards */
+
+.card{
+
+    background:linear-gradient(
+        135deg,
+        #2563EB,
+        #7C3AED
+    );
+
+    padding:30px;
+
+    border-radius:20px;
+
+    text-align:center;
+
+    margin-top:10px;
+
+    margin-bottom:10px;
+
+    box-shadow:
+    0px 10px 25px rgba(
+        0,
+        0,
+        0,
+        0.4
+    );
+}
+
+.card-title{
+
+    color:white;
+
+    font-size:20px;
+}
+
+.score{
+
+    color:white;
+
+    font-size:50px;
+
+    font-weight:bold;
+}
+
+/* Sidebar */
+
+section[data-testid="stSidebar"]{
+
+    background:#1E293B;
+}
