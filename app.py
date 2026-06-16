@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 
+from modules.job_recommender import recommend_jobs
 from modules.resume_parser import extract_resume_text
 from modules.matcher import calculate_match_score
 from modules.skill_extractor import extract_skills
@@ -9,6 +10,7 @@ from modules.feedback import generate_feedback
 from modules.interview_generator import generate_questions
 from modules.groq_feedback import generate_ai_feedback
 from modules.report_generator import generate_report
+from modules.cover_letter import generate_cover_letter
 
 from modules.ui_components import (
     score_card,
@@ -257,81 +259,148 @@ if analyze:
         # TABS
         # ==========================
 
-        tab1, tab2 = st.tabs(
+        tab1, tab2, tab3, tab4 = st.tabs(
             [
                 "🤖 AI Analysis",
-                "🎤 Interview Prep"
+                "🎤 Interview Prep",
+                "📄 Cover Letter",
+                "💼 Job Recommendations"
             ]
         )
 
         # ==========================
-        # TAB 1
+        # TAB 1 - AI ANALYSIS
         # ==========================
 
         with tab1:
 
-            st.subheader(
-                "🤖 AI Resume Feedback"
-            )
+           st.subheader("🤖 AI Resume Feedback")
 
-            for item in feedback:
-                st.info(item)
+           for item in feedback:
+               st.info(item)
+
+           if api_key:
+
+              st.subheader("🧠 Groq AI Resume Analysis")
+
+              with st.spinner("Analyzing Resume..."):
+
+                  ai_feedback = generate_ai_feedback(
+                      resume_text,
+                      jd_text,
+                      api_key
+                  )
+
+                  st.markdown(ai_feedback)
+
+           else:
+
+               ai_feedback = "Groq API Key Not Provided"
+
+               st.warning(
+                   "Please enter Groq API Key."
+               )
+
+
+       # ==========================
+       # TAB 2 - INTERVIEW PREP
+       # ==========================
+
+        with tab2:
+
+           st.subheader(
+                "🎤 Interview Questions"
+           )
+
+           if questions:
+
+               for i, question in enumerate(
+                   questions,
+                   start=1
+               ):
+
+                   st.write(
+                       f"{i}. {question}"
+                 )
+
+           else:
+
+               st.info(
+                   "No interview questions available."
+               )
+
+
+        # ==========================
+        # TAB 3 - COVER LETTER
+        # ==========================
+
+        with tab3:
+
+            st.subheader(
+                "📄 AI Cover Letter"
+            )
 
             if api_key:
 
-                st.subheader(
-                    "🧠 Groq AI Resume Analysis"
-                )
+               if st.button(
+                   "Generate Cover Letter"
+               ):
 
-                with st.spinner(
-                    "Analyzing Resume..."
-                ):
+                   with st.spinner(
+                       "Generating Cover Letter..."
+                   ):
 
-                    ai_feedback = generate_ai_feedback(
-                        resume_text,
-                        jd_text,
-                        api_key
-                    )
+                       cover_letter = generate_cover_letter(
+                           resume_text,
+                           jd_text,
+                           api_key
+                       )
 
-                    st.markdown(
-                        ai_feedback
-                    )
+                       st.text_area(
+                           "Generated Cover Letter",
+                           cover_letter,
+                           height=400
+                       )
+
+                       st.download_button(
+                           label="📥 Download Cover Letter",
+                           data=cover_letter,
+                           file_name="Cover_Letter.txt",
+                           mime="text/plain",
+                           use_container_width=True
+                       )
 
             else:
-
-                ai_feedback = (
-                    "Groq API Key Not Provided"
-                )
 
                 st.warning(
                     "Please enter Groq API Key."
                 )
 
+
         # ==========================
-        # TAB 2
+        # TAB 4 - JOB RECOMMENDATIONS
         # ==========================
 
-        with tab2:
+        with tab4:
 
             st.subheader(
-                "🎤 Interview Questions"
+                "💼 Recommended Career Paths"
             )
 
-            if questions:
+            jobs = recommend_jobs(
+                resume_skills
+            )
 
-                for i, question in enumerate(
-                    questions,
-                    start=1
-                ):
+            if jobs:
 
-                    st.write(
-                        f"{i}. {question}"
-                    )
+                 for job in jobs:
+
+                     st.success(job)
 
             else:
 
                 st.info(
-                    "No interview questions available."
+                    "No recommendations available."
                 )
 
         # ==========================
