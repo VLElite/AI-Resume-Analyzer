@@ -57,22 +57,10 @@ feedback = []
 questions = []
 ai_feedback = ""
 
-# ==========================
-# SIDEBAR
-# ==========================
-
-with st.sidebar:
-
-    st.title("⚙️ Settings")
-
-    api_key = st.text_input(
-        "Groq API Key",
-        type="password"
-    )
-
-    st.info(
-        "Enter your Groq API Key here."
-    )
+try:
+    api_key = st.secrets["GROQ_API_KEY"]
+except Exception:
+    api_key = None
 
 # ==========================
 # INPUTS
@@ -92,12 +80,18 @@ jd_text = st.text_area(
 # ANALYZE BUTTON
 # ==========================
 
+if "analysis_done" not in st.session_state:
+    st.session_state.analysis_done = False
+
 analyze = st.button(
     "🚀 Analyze Resume",
     use_container_width=True
 )
 
 if analyze:
+    st.session_state.analysis_done = True
+
+if st.session_state.analysis_done:
 
     if uploaded_file and jd_text:
 
@@ -294,9 +288,6 @@ if analyze:
                   st.markdown(ai_feedback)
 
            else:
-
-               ai_feedback = "Groq API Key Not Provided"
-
                st.warning(
                    "Please enter Groq API Key."
                )
@@ -356,11 +347,7 @@ if analyze:
                            api_key
                        )
 
-                       st.text_area(
-                           "Generated Cover Letter",
-                           cover_letter,
-                           height=400
-                       )
+                       st.markdown(cover_letter)
 
                        st.download_button(
                            label="📥 Download Cover Letter",
@@ -373,7 +360,7 @@ if analyze:
             else:
 
                 st.warning(
-                    "Please enter Groq API Key."
+                    "Groq API Key is not configured."
                 )
 
 

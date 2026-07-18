@@ -1,0 +1,5 @@
+.streamlit/
+venv/
+__pycache__/
+*.pyc
+resume_report.pdf
